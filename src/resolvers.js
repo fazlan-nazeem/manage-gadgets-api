@@ -39,7 +39,7 @@ module.exports = {
 
     addOrUpdateDeviceAssignment: (_, args, { dataSources }) =>
       dataSources.deviceAssignmentAPI.addOrUpdateDeviceAssignment(args),
-    deleteDeviceAssignment: (_, args, { dataSources }) =>
-      dataSources.deviceAssignmentAPI.deleteDeviceAssignment(args),
+    deleteDeviceAssignment: (_, id, { dataSources }) =>
+      dataSources.deviceAssignmentAPI.deleteDeviceAssignment(id),
   },
 };

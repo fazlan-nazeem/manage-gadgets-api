@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 const logger = require("../logger");
 
 class DeviceAssignmentAPI extends DataSource {
-  constructor({ datastore }) {
+    constructor({ datastore }) {
     super();
     this.datastore = datastore;
   }
@@ -79,64 +79,6 @@ class DeviceAssignmentAPI extends DataSource {
     };
   }
 
-  /**
-   * Get all device categories
-   * @param {*} pageSize the number of elements to retrieve
-   * @param {*} after the offset
-   * @param {*} keyword searc h query
-   */
-  async getAllDeviceCategories(pageSize = 10, after = "0", keyword = "") {
-    logger.info("getAllDeviceCategories function execution started");
-    let rowCount = 0;
-    let records = {};
-
-    if (keyword === "") {
-      const {
-        count,
-        rows,
-      } = await this.datastore.deviceAssignment.findAndCountAll({
-        where: {},
-        offset: parseInt(after),
-        limit: pageSize,
-        order: [["CREATED_AT", "DESC"]],
-      });
-      rowCount = count;
-      records = rows;
-    } else {
-      const {
-        count,
-        rows,
-      } = await this.datastore.deviceAssignment.findAndCountAll({
-        where: {
-          NAME: { $like: `%${keyword}%` },
-        },
-        order: [["CREATED_AT", "DESC"]],
-      });
-      rowCount = count;
-      records = rows;
-    }
-
-    let deviceCategories = [];
-    const rawResult = records
-      .map((l) => l.dataValues)
-      .filter((l) => deviceCategories.push(l));
-
-    const processedResult = rawResult.map(function (entry) {
-      return {
-        id: entry.UUID,
-        name: entry.NAME,
-        createdAt: entry.CREATED_AT,
-        updatedAt: entry.UPDATED_AT,
-      };
-    });
-
-    return {
-      cursor: processedResult.length,
-      hasMore: rowCount > records.length,
-      totalCount: rowCount,
-      deviceCategories: processedResult,
-    };
-  }
 
   /**
    * Deletes a device deviceAssignment given the id
