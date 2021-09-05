@@ -3,7 +3,7 @@ const { gql } = require("apollo-server");
 const typeDefs = gql`
   type Query {
     getRepairs(pageSize: Int, after: String, keyword: String): RepairConnection!
-    getDevices(pageSize: Int, after: String, keyword: String): DeviceConnection!
+    getDevices(pageSize: Int, after: String, keyword: String, deviceStatus: String): DeviceConnection!
     getDeviceCategories(
       pageSize: Int
       after: String
@@ -37,7 +37,6 @@ const typeDefs = gql`
     model: String
     description: String
     vendor: String
-    deviceStatus: String
     purchaseDate: String
     warrantyExpiryDate: String
   }
@@ -127,10 +126,10 @@ const typeDefs = gql`
   }
 
   enum DevicStatus {
+    ALL
     ASSIGNED
     AVAILABLE
     IN_REPAIR
-    DISPOSED
   }
 
   enum RepairStatus {

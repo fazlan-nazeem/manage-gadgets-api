@@ -2,6 +2,7 @@ const { DataSource } = require("apollo-datasource");
 const { v4: uuidv4 } = require("uuid");
 const logger = require("../logger");
 const moment = require("moment");
+const { Op } = require("sequelize");
 
 class DeviceAPI extends DataSource {
   constructor({ datastore }) {
@@ -34,7 +35,6 @@ class DeviceAPI extends DataSource {
       MODEL: argsJson.input.model,
       DESCRIPTION: argsJson.input.description,
       VENDOR: argsJson.input.vendor,
-      DEVICE_STATUS: argsJson.input.deviceStatus,
       PURCHASE_DATE: argsJson.input.purchaseDate,
       WARRANTY_EXPIRY_DATE: argsJson.input.warrantyExpiryDate,
     });
@@ -53,7 +53,7 @@ class DeviceAPI extends DataSource {
       model: createdDeviceEntry.dataValues.MODEL,
       description: createdDeviceEntry.dataValues.DESCRIPTION,
       vendor: createdDeviceEntry.dataValues.VENDOR,
-      deviceStatus: createdDeviceEntry.dataValues.DEVICE_STATUS,
+      deviceStatus: createdDeviceEntry.dataValues.STATUS,
       purchaseDate: createdDeviceEntry.dataValues.PURCHASE_DATE,
       warrantyExpiryDate: createdDeviceEntry.dataValues.WARRANTY_EXPIRY_DATE,
       createdAt: createdDeviceEntry.dataValues.CREATED_AT,
@@ -73,14 +73,25 @@ class DeviceAPI extends DataSource {
    * @param {*} after
    * @param {*} keyword
    */
-  async getAllDevices(pageSize = 10, after = "0", keyword = "") {
+  async getAllDevices(pageSize = 10, after = "0", keyword = "", deviceStatus = "ALL") {
     logger.info("getAllDevices function execution started");
     let rowCount = 0;
     let records = {};
+    let status = {};
+    if (deviceStatus === "ALL") {
+      status = {
+        STATUS : { $like: `%` }
+      };
+    } else {
+      status = {
+        STATUS : deviceStatus
+      };
+    }
+
 
     if (keyword === "") {
       const { count, rows } = await this.datastore.device.findAndCountAll({
-        where: {},
+        where: status,
         offset: parseInt(after),
         limit: pageSize,
         order: [["CREATED_AT", "DESC"]],
@@ -95,7 +106,10 @@ class DeviceAPI extends DataSource {
     } else {
       const { count, rows } = await this.datastore.device.findAndCountAll({
         where: {
-          SERIAL_NUMBER: { $like: `%${keyword}%` },
+          [Op.and] :[
+            {SERIAL_NUMBER: { $like: `%${keyword}%` }},
+            {STATUS: status.STATUS}
+          ]
         },
         order: [["CREATED_AT", "DESC"]],
         include: [
@@ -120,7 +134,7 @@ class DeviceAPI extends DataSource {
         model: entry.MODEL,
         description: entry.DESCRIPTION,
         vendor: entry.VENDOR,
-        deviceStatus: entry.DEVICE_STATUS,
+        deviceStatus: entry.STATUS,
         purchaseDate: entry.PURCHASE_DATE,
         warrantyExpiryDate: entry.WARRANTY_EXPIRY_DATE,
         createdAt: entry.CREATED_AT,
@@ -162,8 +176,8 @@ class DeviceAPI extends DataSource {
         SERIAL_NUMBER: argsJson.input.serialNumber,
         MODEL: argsJson.input.model,
         DESCRIPTION: argsJson.input.description,
+        STATUS:  argsJson.input.deviceStatus,
         VENDOR: argsJson.input.vendor,
-        DEVICE_STATUS: argsJson.input.deviceStatus,
         PURCHASE_DATE: purchaseDate
           .toISOString()
           .slice(0, 10)
@@ -193,7 +207,7 @@ class DeviceAPI extends DataSource {
       model: updatedDeviceEntry.dataValues.MODEL,
       description: updatedDeviceEntry.dataValues.DESCRIPTION,
       vendor: updatedDeviceEntry.dataValues.VENDOR,
-      deviceStatus: updatedDeviceEntry.dataValues.DEVICE_STATUS,
+      deviceStatus: updatedDeviceEntry.dataValues.STATUS,
       purchaseDate: updatedDeviceEntry.dataValues.PURCHASE_DATE,
       warrantyExpiryDate: updatedDeviceEntry.dataValues.WARRANTY_EXPIRY_DATE,
       createdAt: updatedDeviceEntry.dataValues.CREATED_AT,
@@ -245,7 +259,7 @@ class DeviceAPI extends DataSource {
       model: deviceEntry.dataValues.MODEL,
       description: deviceEntry.dataValues.DESCRIPTION,
       vendor: deviceEntry.dataValues.VENDOR,
-      deviceStatus: deviceEntry.dataValues.DEVICE_STATUS,
+      deviceStatus: deviceEntry.dataValues.STATUS,
       purchaseDate: deviceEntry.dataValues.PURCHASE_DATE,
       warrantyExpiryDate: deviceEntry.dataValues.WARRANTY_EXPIRY_DATE,
       createdAt: deviceEntry.dataValues.CREATED_AT,

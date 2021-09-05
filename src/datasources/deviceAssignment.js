@@ -34,7 +34,6 @@ class DeviceAssignmentAPI extends DataSource {
     console.log(entry);
     if (entry) {
       // Entry found. Therefore update
-      console.log("found");
       await this.datastore.deviceAssignment.update(
         {
           NAME: argsJson.input.name,
@@ -58,6 +57,16 @@ class DeviceAssignmentAPI extends DataSource {
         LOCATION: argsJson.input.location,
         CREATED_AT: Date.now(),
       });
+
+       // Change status of the device to 'ASSIGNED'
+       await this.datastore.device.update(
+        {
+          STATUS: "ASSIGNED",
+        },
+        {
+          where: { UUID: argsJson.input.deviceId },
+        }
+      );
     }
 
     const createdDeviceAssignmentEntry = await this.datastore.deviceAssignment.findOne(
@@ -88,11 +97,32 @@ class DeviceAssignmentAPI extends DataSource {
     logger.info("deleteDeviceAssignment function executtion started");
     const DeviceAssignmentId = args.id;
 
+
+     // Find DEVICE UUID of the relevant DeviceAssignmentId before deleting
+     const deviceAssignmentEntry = await this.datastore.deviceAssignment.findOne(
+      {
+        where: {
+          UUID: DeviceAssignmentId,
+        },
+      }
+    );
+
     await this.datastore.deviceAssignment.destroy({
       where: {
         UUID: DeviceAssignmentId,
       },
     });
+
+
+     // Change status of the device to 'AVAILABLE'
+     await this.datastore.device.update(
+      {
+        STATUS: "AVAILABLE",
+      },
+      {
+        where: { UUID: deviceAssignmentEntry.dataValues.DEVICE_ID },
+      }
+    );
 
     return DeviceAssignmentId;
   }

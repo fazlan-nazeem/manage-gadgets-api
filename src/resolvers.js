@@ -2,8 +2,8 @@ module.exports = {
   Query: {
     getRepairs: (_, { pageSize, after, keyword }, { dataSources }) =>
       dataSources.deviceRepairAPI.getAllRepairs(pageSize, after, keyword),
-    getDevices: (_, { pageSize, after, keyword }, { dataSources }) =>
-      dataSources.deviceAPI.getAllDevices(pageSize, after, keyword),
+    getDevices: (_, { pageSize, after, keyword, deviceStatus }, { dataSources }) =>
+      dataSources.deviceAPI.getAllDevices(pageSize, after, keyword, deviceStatus),
     getDeviceCategories: (_, { pageSize, after, keyword }, { dataSources }) =>
       dataSources.deviceCategoryAPI.getAllDeviceCategories(
         pageSize,

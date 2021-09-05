@@ -105,6 +105,7 @@ class DeviceRepairAPI extends DataSource {
   async addRepair(args) {
     const argsJson = JSON.parse(JSON.stringify(args));
     const uuidForRepairEntry = uuidv4();
+
     const createdRepairEntry = await this.datastore.repair.create({
       UUID: uuidForRepairEntry,
       DEVICE_ID: argsJson.input.deviceId,
@@ -114,6 +115,17 @@ class DeviceRepairAPI extends DataSource {
       CREATED_AT: Date.now(),
       UPDATED_AT: Date.now(),
     });
+
+
+     // Change status of the device to 'IN_REPAIR'
+     await this.datastore.device.update(
+      {
+        STATUS: "IN_REPAIR",
+      },
+      {
+        where: { UUID: argsJson.input.deviceId},
+      }
+    );
 
     const associatedDeviceEntry = await this.datastore.device.find({
       where: { UUID: argsJson.input.deviceId },
@@ -158,11 +170,30 @@ class DeviceRepairAPI extends DataSource {
   async deleteRepair(args) {
     const repairId = args.id;
 
+      // Find DEVICE UUID of the relevant Repair Entry before deleting
+      const deviceRepairEntry = await this.datastore.repair.findOne(
+      {
+        where: {
+          UUID: repairId,
+        },
+      }
+    );
+
     await this.datastore.repair.destroy({
       where: {
         UUID: repairId,
       },
     });
+
+     // Change status of the device to 'AVAILABLE'
+     await this.datastore.device.update(
+      {
+        STATUS: "AVAILABLE",
+      },
+      {
+        where: { UUID: deviceRepairEntry.dataValues.DEVICE_ID },
+      }
+    );
 
     return repairId;
   }
