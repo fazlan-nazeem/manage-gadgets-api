@@ -6,8 +6,8 @@ Backend API of Manage Gadgets
 ```
 export DB_HOST=<"HOST>"
 export DATABASE="<DATABASE>"
-export USERNAME="<USERNAME>"
-export PASSWROD="<PASSWORD>" 
+export DB_USER="<USERNAME>"
+export DB_PASS="<PASSWORD>" 
 ```
 
 ## Starting the API Server

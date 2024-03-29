@@ -7,8 +7,8 @@ config.host.server_port = process.env.SERVER_PORT || 4000;
 config.db = {};
 config.db.host = process.env.DB_HOST;
 config.db.database = process.env.DATABASE;
-config.db.username = process.env.USERNAME;
-config.db.password = process.env.PASSWORD;
+config.db.username = process.env.DB_USER;
+config.db.password = process.env.DB_PASS;
 
 config.auth = {};
 config.auth.jwks = process.env.JWKS;
