@@ -6,6 +6,7 @@ config.host.server_port = process.env.SERVER_PORT || 4000;
 
 config.db = {};
 config.db.host = process.env.DB_HOST;
+config.db.port = process.env.DB_PORT;
 config.db.database = process.env.DATABASE;
 config.db.username = process.env.DB_USER;
 config.db.password = process.env.DB_PASS;

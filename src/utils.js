@@ -42,6 +42,7 @@ module.exports.createStore = () => {
     config.db.password,
     {
       host: config.db.host,
+      port: config.db.port,
       dialect: "mysql",
       logging: function () {},
       pool: {
