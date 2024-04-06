@@ -31,7 +31,7 @@ class DeviceCategoryAPI extends DataSource {
       CREATED_AT: Date.now(),
     });
 
-    const createdDeviceCategoryEntry = await this.datastore.category.find({
+    const createdDeviceCategoryEntry = await this.datastore.category.findOne({
       where: { UUID: uuidForDeviceCategoryEntry },
     });
 
