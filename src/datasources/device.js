@@ -39,11 +39,11 @@ class DeviceAPI extends DataSource {
       WARRANTY_EXPIRY_DATE: argsJson.input.warrantyExpiryDate,
     });
 
-    const createdDeviceEntry = await this.datastore.device.find({
+    const createdDeviceEntry = await this.datastore.device.findOne({
       where: { UUID: uuidForDeviceEntry },
     });
 
-    const associatedDeviceCategoryEntry = await this.datastore.category.find({
+    const associatedDeviceCategoryEntry = await this.datastore.category.findOne({
       where: { UUID: argsJson.input.categoryId },
     });
 
@@ -80,7 +80,9 @@ class DeviceAPI extends DataSource {
     let status = {};
     if (deviceStatus === "ALL") {
       status = {
-        STATUS : { $like: `%` }
+        STATUS: {
+          [Op.like]: '%' // Adjust your search pattern as needed
+        }
       };
     } else {
       status = {

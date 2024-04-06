@@ -19,6 +19,7 @@ services:
       DB_PASS: root
     ports:
       - 4000:4000
+      - 9229:9229
   db:
     image: mysql
     restart: always
