@@ -59,7 +59,7 @@ class DeviceCategoryAPI extends DataSource {
       }
     );
 
-    const updatedDeviceCategoryEntry = await this.datastore.category.find({
+    const updatedDeviceCategoryEntry = await this.datastore.category.findOne({
       where: { UUID: args.id },
     });
 
