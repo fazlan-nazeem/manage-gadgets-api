@@ -1,6 +1,7 @@
 const { DataSource } = require("apollo-datasource");
 const { v4: uuidv4 } = require("uuid");
 const logger = require("../logger");
+const { Op } = require("sequelize");
 
 class DeviceCategoryAPI extends DataSource {
   constructor({ datastore }) {
@@ -94,7 +95,7 @@ class DeviceCategoryAPI extends DataSource {
     } else {
       const { count, rows } = await this.datastore.category.findAndCountAll({
         where: {
-          NAME: { $like: `%${keyword}%` },
+          NAME: { [Op.like]: `%${keyword}%` },
         },
         order: [["CREATED_AT", "DESC"]],
       });
