@@ -1,5 +1,6 @@
 const { DataSource } = require("apollo-datasource");
 const { v4: uuidv4 } = require("uuid");
+const { Op } = require("sequelize");
 
 class DeviceRepairAPI extends DataSource {
   constructor({ datastore }) {
@@ -40,7 +41,7 @@ class DeviceRepairAPI extends DataSource {
       records = rows;
     } else {
       const { count, rows } = await this.datastore.repair.findAndCountAll({
-        where: {},
+        where: {AGENT: { [Op.like]: `%${keyword}%` }},
         offset: parseInt(after),
 
         include: [

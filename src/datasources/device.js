@@ -109,7 +109,7 @@ class DeviceAPI extends DataSource {
       const { count, rows } = await this.datastore.device.findAndCountAll({
         where: {
           [Op.and] :[
-            {SERIAL_NUMBER: { $like: `%${keyword}%` }},
+            {SERIAL_NUMBER: { [Op.like]: `%${keyword}%` }},
             {STATUS: status.STATUS}
           ]
         },
