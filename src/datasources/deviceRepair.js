@@ -127,7 +127,7 @@ class DeviceRepairAPI extends DataSource {
       }
     );
 
-    const associatedDeviceEntry = await this.datastore.device.find({
+    const associatedDeviceEntry = await this.datastore.device.findOne({
       where: { UUID: argsJson.input.deviceId },
       include: [
         {
@@ -211,7 +211,7 @@ class DeviceRepairAPI extends DataSource {
       }
     );
 
-    const updatedRepairEntry = await this.datastore.repair.find({
+    const updatedRepairEntry = await this.datastore.repair.findOne({
       where: { UUID: argsJson.input.id },
       include: [
         {
