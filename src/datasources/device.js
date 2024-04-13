@@ -195,11 +195,11 @@ class DeviceAPI extends DataSource {
       }
     );
 
-    const updatedDeviceEntry = await this.datastore.device.find({
+    const updatedDeviceEntry = await this.datastore.device.findOne({
       where: { UUID: argsJson.input.id },
     });
 
-    const associatedDeviceCategoryEntry = await this.datastore.category.find({
+    const associatedDeviceCategoryEntry = await this.datastore.category.findOne({
       where: { UUID: argsJson.input.categoryId },
     });
 
@@ -244,7 +244,7 @@ class DeviceAPI extends DataSource {
    */
   async getDeviceById(args) {
     const deviceId = args.id;
-    const deviceEntry = await this.datastore.device.find({
+    const deviceEntry = await this.datastore.device.findOne({
       where: {
         UUID: deviceId,
       },
